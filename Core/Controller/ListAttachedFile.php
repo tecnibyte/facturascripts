@@ -24,7 +24,7 @@ use FacturaScripts\Core\Model\AttachedFile;
 /**
  * Controller to list the items in the AttachedFile model
  *
- * @author Carlos GarcÃ­a GÃ³mez      <carlos@facturascripts.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
 class ListAttachedFile extends ListController
@@ -96,7 +96,7 @@ class ListAttachedFile extends ListController
                              
                         $fichero= $ficheros->get($code);
                                 
-                        $nombrefichero= $fichero->filename;
+                        
                         // Añadimos los ficheros pasándole la ruta y el nombre con que se agregará
                         $zip->addFile($fichero->path,$code."_".$fichero->filename);
     
