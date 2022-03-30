@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Model\AttachedFile;
 
 /**
  * Controller to list the items in the AttachedFile model
@@ -61,5 +62,65 @@ class ListAttachedFile extends ListController
 
         $types = $this->codeModel->all('attached_files', 'mimetype', 'mimetype');
         $this->addFilterSelect($viewName, 'mimetype', 'type', 'mimetype', $types);
+        $this->addButton('ListAttachedFile',[
+            'type' => 'action',
+            'action' => 'DescargarZip',
+            'color' => 'success',
+            'icon' => 'fas fa-file-archive',
+            'label' => 'Descargar en zip'
+            
+            
+            
+        ]);
+
+        
     }
+    
+    
+     protected function execAfterAction($action)
+{
+         
+                if($action === 'DescargarZip') {
+                    
+                    // Creamos un instancia de la clase ZipArchive
+                    $zip = new \ZipArchive();
+ 
+                    // Creamos y abrimos un archivo zip temporal
+                    $zip->open("biblioteca.zip",\ZipArchive::CREATE);
+
+                    //obtenemos los id marcados e instanciamos un nuevo objeto de tipo AttachedFile
+                    $codes = $this->request->get('code');
+                    $ficheros= new AttachedFile();
+
+                    foreach ($codes as $code) {
+                             
+                        $fichero= $ficheros->get($code);
+                                
+                        
+                        // Añadimos los ficheros pasándole la ruta y el nombre con que se agregará
+                        $zip->addFile($fichero->path,$code."_".$fichero->filename);
+    
+                        }
+
+
+                    // Una vez añaadido los archivos deseados cerramos el zip.
+ 
+                    $zip->close();
+                    // Creamos las cabezeras que forzaran la descarga del archivo como archivo zip.
+                    header("Content-type: application/octet-stream");
+                    header("Content-disposition: attachment; filename=biblioteca.zip");
+                    // leemos el archivo creado
+                    readfile('biblioteca.zip');
+                    // eliminamos el archivo temporal creado
+                    unlink('biblioteca.zip');//Destruye el archivo temporal  
+                    
+                    
+                    
+                    
+                }
+
+
+         
+         
+     }
 }
